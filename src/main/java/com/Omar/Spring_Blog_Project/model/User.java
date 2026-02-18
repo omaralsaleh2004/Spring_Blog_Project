@@ -20,5 +20,7 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
+    @OneToOne(mappedBy = "user")
+    Profile profile;
 
 }
