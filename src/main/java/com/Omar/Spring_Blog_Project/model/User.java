@@ -20,7 +20,13 @@ public class User {
     private String email;
     @Column(nullable = false)
     private String password;
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user" , fetch = FetchType.LAZY)
     Profile profile;
+    @OneToMany(mappedBy = "user" , fetch = FetchType.LAZY)
+    private List<Post> posts;
+    @OneToMany(mappedBy = "user" , fetch =FetchType.LAZY)
+    private List<Comment> comments;
+    @OneToMany(mappedBy = "user" , fetch = FetchType.LAZY)
+    private List<Like> likes;
 
 }

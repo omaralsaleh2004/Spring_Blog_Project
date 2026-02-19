@@ -5,20 +5,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
 @Data
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Profile {
+@Table( name = "likes",uniqueConstraints = {@UniqueConstraint(columnNames = {"post_id" , "user_id"})})
+public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
-    private String jobTitle;
-    private String location;
-    private String imageName;
-    private String imageType;
-    @Lob
-    private byte[] imageData;
-    @OneToOne(fetch = FetchType.LAZY)
-    User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Post post;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 }
