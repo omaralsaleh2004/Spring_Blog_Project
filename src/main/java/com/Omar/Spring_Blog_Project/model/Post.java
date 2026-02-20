@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -19,6 +20,7 @@ public class Post {
     private String title;
     @Column(nullable = false)
     private String description;
+    private LocalDateTime createdAt;
     private String imageName;
     private String imageType;
     private byte[] imageData;
