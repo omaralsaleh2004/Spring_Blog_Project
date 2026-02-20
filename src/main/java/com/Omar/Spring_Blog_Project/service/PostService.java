@@ -6,6 +6,7 @@ import com.Omar.Spring_Blog_Project.dto.PostRequest;
 import com.Omar.Spring_Blog_Project.dto.PostResponse;
 import com.Omar.Spring_Blog_Project.exception.HandelAllException;
 import com.Omar.Spring_Blog_Project.exception.InvalidDataException;
+import com.Omar.Spring_Blog_Project.exception.NotFoundException;
 import com.Omar.Spring_Blog_Project.exception.UnauthorizedException;
 import com.Omar.Spring_Blog_Project.model.Post;
 import com.Omar.Spring_Blog_Project.model.User;
@@ -65,5 +66,44 @@ public class PostService {
         int numOfComment = commentRepo.countByPostId(savedPost.getId());
 
         return postMapper.toDto(savedPost , numOfLikes , numOfComment);
+    }
+
+    public PostResponse editPost(PostRequest postRequest, MultipartFile img , int postId) {
+        User user = authService.getCurrentUser();
+
+        if (user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+
+        Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post Not Found"));
+
+        if(!user.getId().equals(post.getUser().getId())) {
+            throw new UnauthorizedException("You can only edit your own post");
+        }
+
+        if (postRequest.getTitle() != null && !postRequest.getTitle().trim().isEmpty()) {
+            post.setTitle(postRequest.getTitle());
+        }
+
+        if (postRequest.getDescription() != null && !postRequest.getDescription().trim().isEmpty()) {
+            post.setDescription(postRequest.getDescription());
+        }
+
+        if (img != null && !img.isEmpty()) {
+            post.setImageName(img.getOriginalFilename());
+            post.setImageType(img.getContentType());
+            try {
+                post.setImageData(img.getBytes());
+            } catch (IOException e) {
+                throw new HandelAllException(e.getMessage());
+            }
+        }
+
+        Post updatedPost = postRepo.save(post);
+
+        int numOfLikes = likeRepo.countByPostId(updatedPost.getId());
+        int numOfComment = commentRepo.countByPostId(updatedPost.getId());
+
+        return postMapper.toDto(updatedPost , numOfLikes , numOfComment);
     }
 }
