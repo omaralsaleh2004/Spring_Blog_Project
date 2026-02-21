@@ -26,9 +26,9 @@ public class Post {
     private byte[] imageData;
     @ManyToOne
     private User user;
-    @OneToMany(mappedBy = "post" , fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post" , fetch = FetchType.LAZY , cascade = CascadeType.ALL , orphanRemoval = true)
     private List<Comment> comments;
-    @OneToMany(mappedBy = "post" , fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post" , fetch = FetchType.LAZY , cascade = CascadeType.ALL , orphanRemoval = true)
     private List<Like> likes;
 
 }

@@ -15,10 +15,12 @@ import com.Omar.Spring_Blog_Project.repo.LikeRepo;
 import com.Omar.Spring_Blog_Project.repo.PostRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class PostService {
@@ -105,5 +107,57 @@ public class PostService {
         int numOfComment = commentRepo.countByPostId(updatedPost.getId());
 
         return postMapper.toDto(updatedPost , numOfLikes , numOfComment);
+    }
+
+    @Transactional
+    public void deletePost(int postId) {
+        User user = authService.getCurrentUser();
+
+        if (user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+        Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post Not Found"));
+
+        if(!user.getId().equals(post.getUser().getId())) {
+            throw new UnauthorizedException("You can only delete your own post");
+        }
+
+        postRepo.delete(post);
+    }
+
+    public PostResponse getPostById(int postId) {
+        User user = authService.getCurrentUser();
+
+        if (user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+        Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post Not Found"));
+
+        int numOfLikes = likeRepo.countByPostId(post.getId());
+        int numOfComment = commentRepo.countByPostId(post.getId());
+
+        return postMapper.toDto(post , numOfLikes , numOfComment);
+    }
+
+    public List<PostResponse> getAllPost() {
+        User user = authService.getCurrentUser();
+
+        if (user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+
+        List<Post> posts = postRepo.findAll();
+
+        if(posts.isEmpty()) {
+            throw new NotFoundException("No posts available");
+        }
+
+        return posts.stream().map(post ->  {
+            int numOfLikes = likeRepo.countByPostId(post.getId());
+            int numOfComment = commentRepo.countByPostId(post.getId());
+
+            return postMapper.toDto(post , numOfLikes , numOfComment);
+        }).toList();
+
     }
 }
