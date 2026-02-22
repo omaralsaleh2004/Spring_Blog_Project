@@ -1,13 +1,12 @@
 package com.Omar.Spring_Blog_Project.service;
 
 
+import com.Omar.Spring_Blog_Project.dto.LikeResponse;
 import com.Omar.Spring_Blog_Project.dto.PostMapper;
 import com.Omar.Spring_Blog_Project.dto.PostRequest;
 import com.Omar.Spring_Blog_Project.dto.PostResponse;
-import com.Omar.Spring_Blog_Project.exception.HandelAllException;
-import com.Omar.Spring_Blog_Project.exception.InvalidDataException;
-import com.Omar.Spring_Blog_Project.exception.NotFoundException;
-import com.Omar.Spring_Blog_Project.exception.UnauthorizedException;
+import com.Omar.Spring_Blog_Project.exception.*;
+import com.Omar.Spring_Blog_Project.model.Like;
 import com.Omar.Spring_Blog_Project.model.Post;
 import com.Omar.Spring_Blog_Project.model.User;
 import com.Omar.Spring_Blog_Project.repo.CommentRepo;
@@ -33,6 +32,7 @@ public class PostService {
     private final LikeRepo likeRepo;
 
 
+    @Transactional
     public PostResponse createPost(PostRequest postRequest, MultipartFile img) {
         User user = authService.getCurrentUser();
 
@@ -69,6 +69,7 @@ public class PostService {
         return postMapper.toDto(savedPost , numOfLikes , numOfComment);
     }
 
+    @Transactional
     public PostResponse editPost(PostRequest postRequest, MultipartFile img , int postId) {
         User user = authService.getCurrentUser();
 
@@ -158,5 +159,48 @@ public class PostService {
             return postMapper.toDto(post , numOfLikes , numOfComment);
         }).toList();
 
+    }
+
+    @Transactional
+    public LikeResponse likePost(int postId) {
+        User user = authService.getCurrentUser();
+
+        if (user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+        Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post Not Found"));
+
+       if(likeRepo.existsByUserAndPost(user , post)) {
+           throw new BadRequest("You already liked this post");
+       }
+
+        Like like = new Like();
+        like.setUser(user);
+        like.setPost(post);
+
+        likeRepo.save(like);
+
+        int likeCount = likeRepo.countByPostId(postId);
+
+        return new LikeResponse(post.getId() , likeCount);
+    }
+
+    @Transactional
+    public LikeResponse unlikePost(int postId) {
+
+        User user = authService.getCurrentUser();
+
+        if (user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+        Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post Not Found"));
+
+        Like like = likeRepo.findByUserAndPost(user , post).orElseThrow(()-> new BadRequest("Cannot unlike this post: you haven't liked it yet"));
+
+        likeRepo.delete(like);
+
+        int likeCount = likeRepo.countByPostId(postId);
+
+        return new LikeResponse(post.getId() , likeCount);
     }
 }

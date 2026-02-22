@@ -1,6 +1,7 @@
 package com.Omar.Spring_Blog_Project.controller;
 
 import com.Omar.Spring_Blog_Project.dto.ApiResponse;
+import com.Omar.Spring_Blog_Project.dto.LikeResponse;
 import com.Omar.Spring_Blog_Project.dto.PostRequest;
 import com.Omar.Spring_Blog_Project.dto.PostResponse;
 import com.Omar.Spring_Blog_Project.service.PostService;
@@ -44,6 +45,25 @@ public class PostController {
         ApiResponse<String> response = new ApiResponse<>(
                 "Post Deleted Successfully",
                 null
+        );
+        return ResponseEntity.ok().body(response);
+    }
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<ApiResponse<LikeResponse>> likePost(@PathVariable int postId) {
+        LikeResponse likeResponse = postService.likePost(postId);
+        ApiResponse<LikeResponse> response = new ApiResponse<>(
+                "Post Liked Successfully",
+                likeResponse
+        );
+        return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/{postId}/like")
+    public ResponseEntity<ApiResponse<LikeResponse>> unlikePost(@PathVariable int postId) {
+        LikeResponse likeResponse = postService.unlikePost(postId);
+        ApiResponse<LikeResponse> response = new ApiResponse<>(
+                "Post UnLiked Successfully",
+                likeResponse
         );
         return ResponseEntity.ok().body(response);
     }

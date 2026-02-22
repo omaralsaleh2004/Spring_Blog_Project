@@ -44,12 +44,21 @@ public class GlobalExceptionHandler {
                 status);
     }
 
+    @ExceptionHandler(BadRequest.class)
+    public ResponseEntity<ErrorResponse> handleAll(BadRequest ex) {
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        return new ResponseEntity<>(new ErrorResponse(status.value(),status.getReasonPhrase() , ex.getMessage()),
+                status);
+    }
+
     @ExceptionHandler(HandelAllException.class)
     public ResponseEntity<ErrorResponse> handleAll(HandelAllException ex) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         return new ResponseEntity<>(new ErrorResponse(status.value(),status.getReasonPhrase() ,"Something went wrong"),
                 status);
     }
+
+
 
 
 
