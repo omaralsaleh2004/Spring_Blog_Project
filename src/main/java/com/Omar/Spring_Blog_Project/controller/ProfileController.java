@@ -6,21 +6,21 @@ import com.Omar.Spring_Blog_Project.dto.ProfileRequest;
 import com.Omar.Spring_Blog_Project.dto.ProfileResponse;
 import com.Omar.Spring_Blog_Project.model.Profile;
 import com.Omar.Spring_Blog_Project.service.ProfileService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/profile")
 public class ProfileController {
-    @Autowired
-    ProfileService profileService;
 
-    @PostMapping("/create")
+    private final ProfileService profileService;
+
+    @PostMapping("")
     public ResponseEntity<ApiResponse<ProfileResponse>> createProfile(@RequestPart Profile p , @RequestPart MultipartFile img) {
         ProfileResponse profileResponse = profileService.createProfile(p , img);
         ApiResponse<ProfileResponse> response = new ApiResponse<>(
@@ -30,7 +30,7 @@ public class ProfileController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/edit")
+    @PutMapping("")
     public ResponseEntity<ApiResponse<ProfileResponse>> editProfile(@RequestPart ProfileRequest p , @RequestPart MultipartFile img) {
         ProfileResponse profileResponse = profileService.editProfile(p , img);
         ApiResponse<ProfileResponse> response = new ApiResponse<>(
@@ -40,7 +40,7 @@ public class ProfileController {
         return ResponseEntity.ok().body(response);
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("")
     public ResponseEntity<ApiResponse<String>>deleteProfile() {
         profileService.deleteProfile();
         ApiResponse<String> response = new ApiResponse(

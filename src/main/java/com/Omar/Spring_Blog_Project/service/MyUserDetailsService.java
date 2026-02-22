@@ -4,17 +4,18 @@ package com.Omar.Spring_Blog_Project.service;
 import com.Omar.Spring_Blog_Project.model.User;
 import com.Omar.Spring_Blog_Project.model.UserPrinciple;
 import com.Omar.Spring_Blog_Project.repo.UserRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class MyUserDetailsService implements UserDetailsService {
 
-    @Autowired
-    UserRepo userRepo;
+
+    private final UserRepo userRepo;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

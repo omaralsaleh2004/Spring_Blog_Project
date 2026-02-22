@@ -13,7 +13,7 @@ import com.Omar.Spring_Blog_Project.model.User;
 import com.Omar.Spring_Blog_Project.repo.CommentRepo;
 import com.Omar.Spring_Blog_Project.repo.LikeRepo;
 import com.Omar.Spring_Blog_Project.repo.PostRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,18 +22,17 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class PostService {
-    @Autowired
-    AuthService authService;
-    @Autowired
-    PostRepo postRepo;
-    @Autowired
-    PostMapper postMapper;
-    @Autowired
-    CommentRepo commentRepo;
-    @Autowired
-    LikeRepo likeRepo;
+
+    private final AuthService authService;
+    private final PostRepo postRepo;
+    private final PostMapper postMapper;
+    private final CommentRepo commentRepo;
+    private final LikeRepo likeRepo;
+
+
     public PostResponse createPost(PostRequest postRequest, MultipartFile img) {
         User user = authService.getCurrentUser();
 

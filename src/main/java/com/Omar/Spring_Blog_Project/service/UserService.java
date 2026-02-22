@@ -4,15 +4,16 @@ package com.Omar.Spring_Blog_Project.service;
 
 import com.Omar.Spring_Blog_Project.model.User;
 import com.Omar.Spring_Blog_Project.repo.UserRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepo userRepo;
+
+    private final UserRepo userRepo;
     private BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(12);
 
     public User saveUser(User user) {

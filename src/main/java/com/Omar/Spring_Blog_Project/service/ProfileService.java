@@ -11,7 +11,7 @@ import com.Omar.Spring_Blog_Project.model.Profile;
 import com.Omar.Spring_Blog_Project.model.User;
 import com.Omar.Spring_Blog_Project.repo.ProfileRepo;
 import com.Omar.Spring_Blog_Project.repo.UserRepo;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,17 +19,15 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class ProfileService {
 
-    @Autowired
-    UserRepo userRepo;
-    @Autowired
-    AuthService authService;
-    @Autowired
-    ProfileRepo profileRepo;
-    @Autowired
-    ProfileMapper profileMapper;
+
+    private final UserRepo userRepo;
+    private final AuthService authService;
+    private final ProfileRepo profileRepo;
+    private final ProfileMapper profileMapper;
 
     @Transactional
     public ProfileResponse createProfile(Profile p, MultipartFile img) {

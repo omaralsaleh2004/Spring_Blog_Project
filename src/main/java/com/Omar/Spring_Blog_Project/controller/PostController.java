@@ -3,9 +3,8 @@ package com.Omar.Spring_Blog_Project.controller;
 import com.Omar.Spring_Blog_Project.dto.ApiResponse;
 import com.Omar.Spring_Blog_Project.dto.PostRequest;
 import com.Omar.Spring_Blog_Project.dto.PostResponse;
-import com.Omar.Spring_Blog_Project.model.Post;
 import com.Omar.Spring_Blog_Project.service.PostService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,12 +12,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/post")
 public class PostController {
 
-    @Autowired
-    PostService postService;
+
+    private final PostService postService;
 
     @PostMapping("")
     public ResponseEntity<ApiResponse<PostResponse>> createPost(@RequestPart PostRequest postRequest , MultipartFile img) {
