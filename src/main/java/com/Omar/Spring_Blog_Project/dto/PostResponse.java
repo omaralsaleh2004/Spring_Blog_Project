@@ -10,6 +10,7 @@ public class PostResponse {
     private String title;
     private String description;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
     private Integer authorId;
     private String authorName;
     private Integer likeCount;

@@ -73,6 +73,15 @@ public class PostController {
         );
         return ResponseEntity.ok().body(response);
     }
+    @PutMapping("/{postId}/comment/{commentId}")
+    public ResponseEntity<ApiResponse<CommentResponse>> editComment(@RequestBody CommentRequest commentRequest, @PathVariable int postId , @PathVariable int commentId) {
+        CommentResponse commentResponse = postService.editComment(commentRequest , postId , commentId);
+        ApiResponse<CommentResponse> response = new ApiResponse<>(
+                "Comment edited Successfully",
+                commentResponse
+        );
+        return ResponseEntity.ok().body(response);
+    }
     @DeleteMapping("/{postId}/comment/{commentId}")
     public ResponseEntity<ApiResponse<String>> commentPost(@PathVariable int postId , @PathVariable int commentId) {
         postService.deleteComment(postId,commentId);
@@ -82,6 +91,13 @@ public class PostController {
         );
         return ResponseEntity.ok().body(response);
     }
+
+    @GetMapping("/{postId}/comment")
+    public ResponseEntity<List<CommentResponse>> getAllComments(@PathVariable int postId) {
+        List<CommentResponse> commentResponse = postService.getAllComments(postId);
+        return ResponseEntity.ok().body(commentResponse);
+    }
+
     @GetMapping("/{postId}")
     public ResponseEntity<PostResponse> getPostById (@PathVariable int postId) {
         PostResponse postResponse = postService.getPostById(postId);

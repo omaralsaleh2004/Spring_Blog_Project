@@ -26,6 +26,7 @@ public class PostService {
     private final AuthService authService;
     private final PostRepo postRepo;
     private final PostMapper postMapper;
+    private final CommentMapper commentMapper;
     private final CommentRepo commentRepo;
     private final LikeRepo likeRepo;
 
@@ -58,7 +59,7 @@ public class PostService {
             throw new HandelAllException(e.getMessage());
         }
 
-
+        p.setCreatedAt(LocalDateTime.now());
         Post savedPost =  postRepo.save(p);
 
         int numOfLikes = likeRepo.countByPostId(savedPost.getId());
@@ -98,7 +99,7 @@ public class PostService {
                 throw new HandelAllException(e.getMessage());
             }
         }
-
+        post.setUpdatedAt(LocalDateTime.now());
         Post updatedPost = postRepo.save(post);
 
         int numOfLikes = likeRepo.countByPostId(updatedPost.getId());
@@ -215,10 +216,10 @@ public class PostService {
         comment.setUser(user);
         comment.setPost(post);
         comment.setCommentDescription(commentRequest.content());
-
+        comment.setCreatedAt(LocalDateTime.now());
         Comment savedComment = commentRepo.save(comment);
 
-        return new CommentResponse(savedComment.getId() , savedComment.getCommentDescription() , savedComment.getPost().getId() , savedComment.getUser().getFirstName() + " " +savedComment.getUser().getLastName());
+        return commentMapper.toDto(savedComment);
     }
 
     public void deleteComment(int postId,int commentId) {
@@ -241,5 +242,40 @@ public class PostService {
         }
 
         commentRepo.delete(comment);
+    }
+
+    public CommentResponse editComment(CommentRequest commentRequest, int postId , int commentId) {
+        User user = authService.getCurrentUser();
+
+        if (user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+
+        Comment comment = commentRepo.findById(commentId).orElseThrow(() -> new NotFoundException("Comment Not Found"));
+
+        if(!comment.getUser().getId().equals(user.getId())) {
+            throw new UnauthorizedException("Not allowed to update this comment");
+        }
+        comment.setCommentDescription(commentRequest.content());
+        comment.setUpdatedAt(LocalDateTime.now());
+        Comment updated = commentRepo.save(comment);
+
+        return commentMapper.toDto(updated);
+    }
+
+    public List<CommentResponse> getAllComments(int postId) {
+        User user = authService.getCurrentUser();
+
+        if (user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+
+        Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post Not Found"));
+
+        List<Comment> comments = commentRepo.findByPostOrderByUpdatedAtDescCreatedAtDesc(post);
+
+        return comments.stream()
+                .map(comment -> commentMapper.toDto(comment)).toList();
+
     }
 }

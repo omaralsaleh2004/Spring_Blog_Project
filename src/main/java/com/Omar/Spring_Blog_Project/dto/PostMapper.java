@@ -15,7 +15,7 @@ public class PostMapper {
         postResponse.setCommentCount(comment);
         postResponse.setLikeCount(likes);
         postResponse.setCreatedAt(p.getCreatedAt());
-
+        postResponse.setUpdatedAt(p.getUpdatedAt());
         return postResponse;
     }
 }
