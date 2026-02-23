@@ -1,9 +1,6 @@
 package com.Omar.Spring_Blog_Project.controller;
 
-import com.Omar.Spring_Blog_Project.dto.ApiResponse;
-import com.Omar.Spring_Blog_Project.dto.LikeResponse;
-import com.Omar.Spring_Blog_Project.dto.PostRequest;
-import com.Omar.Spring_Blog_Project.dto.PostResponse;
+import com.Omar.Spring_Blog_Project.dto.*;
 import com.Omar.Spring_Blog_Project.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -64,6 +61,24 @@ public class PostController {
         ApiResponse<LikeResponse> response = new ApiResponse<>(
                 "Post UnLiked Successfully",
                 likeResponse
+        );
+        return ResponseEntity.ok().body(response);
+    }
+    @PostMapping("/{postId}/comment")
+    public ResponseEntity<ApiResponse<CommentResponse>> commentPost(@RequestBody CommentRequest commentRequest, @PathVariable int postId) {
+        CommentResponse commentResponse = postService.addComment(commentRequest , postId);
+        ApiResponse<CommentResponse> response = new ApiResponse<>(
+          "Comment added Successfully",
+                commentResponse
+        );
+        return ResponseEntity.ok().body(response);
+    }
+    @DeleteMapping("/{postId}/comment/{commentId}")
+    public ResponseEntity<ApiResponse<String>> commentPost(@PathVariable int postId , @PathVariable int commentId) {
+        postService.deleteComment(postId,commentId);
+        ApiResponse<String> response = new ApiResponse<>(
+                "Comment deleted Successfully",
+                null
         );
         return ResponseEntity.ok().body(response);
     }

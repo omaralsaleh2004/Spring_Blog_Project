@@ -1,11 +1,9 @@
 package com.Omar.Spring_Blog_Project.service;
 
 
-import com.Omar.Spring_Blog_Project.dto.LikeResponse;
-import com.Omar.Spring_Blog_Project.dto.PostMapper;
-import com.Omar.Spring_Blog_Project.dto.PostRequest;
-import com.Omar.Spring_Blog_Project.dto.PostResponse;
+import com.Omar.Spring_Blog_Project.dto.*;
 import com.Omar.Spring_Blog_Project.exception.*;
+import com.Omar.Spring_Blog_Project.model.Comment;
 import com.Omar.Spring_Blog_Project.model.Like;
 import com.Omar.Spring_Blog_Project.model.Post;
 import com.Omar.Spring_Blog_Project.model.User;
@@ -202,5 +200,46 @@ public class PostService {
         int likeCount = likeRepo.countByPostId(postId);
 
         return new LikeResponse(post.getId() , likeCount);
+    }
+
+    public CommentResponse addComment(CommentRequest commentRequest, int postId) {
+        User user = authService.getCurrentUser();
+
+        if (user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+
+        Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post Not Found"));
+
+        Comment comment = new Comment();
+        comment.setUser(user);
+        comment.setPost(post);
+        comment.setCommentDescription(commentRequest.content());
+
+        Comment savedComment = commentRepo.save(comment);
+
+        return new CommentResponse(savedComment.getId() , savedComment.getCommentDescription() , savedComment.getPost().getId() , savedComment.getUser().getFirstName() + " " +savedComment.getUser().getLastName());
+    }
+
+    public void deleteComment(int postId,int commentId) {
+        User user = authService.getCurrentUser();
+
+        if (user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+
+        Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post Not Found"));
+
+        Comment comment = commentRepo.findById(commentId).orElseThrow(() -> new NotFoundException("Comment Not Found"));
+
+        if(!comment.getPost().getId().equals(postId)) {
+            throw new BadRequest("Comment does not belong to this post");
+        }
+
+        if(!user.getId().equals(comment.getUser().getId())) {
+            throw new UnauthorizedException("Not allowed to delete this comment");
+        }
+
+        commentRepo.delete(comment);
     }
 }
