@@ -1,6 +1,7 @@
 package com.Omar.Spring_Blog_Project.controller;
 
 import com.Omar.Spring_Blog_Project.dto.*;
+import com.Omar.Spring_Blog_Project.model.Post;
 import com.Omar.Spring_Blog_Project.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -113,5 +114,10 @@ public class PostController {
     public ResponseEntity<List<PostResponse>> getAllPosts () {
         List<PostResponse> postResponses = postService.getAllPost();
         return ResponseEntity.ok().body(postResponses);
+    }
+    @GetMapping("/{postId}/image")
+    public ResponseEntity<byte[]> getPostImage(@PathVariable int postId) {
+        Post post = postService.getPostImage(postId);
+        return ResponseEntity.ok().body(post.getImageData());
     }
 }

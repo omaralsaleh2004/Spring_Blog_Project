@@ -295,4 +295,14 @@ public class PostService {
                 .map(like -> new LikeUserResponse(like.getUser().getId() , like.getUser().getFirstName() + " "+like.getUser().getLastName()))
                 .toList();
     }
+
+    public Post getPostImage(int postId) {
+        User user = authService.getCurrentUser();
+
+        if (user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+
+        return postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post Not Found"));
+    }
 }
