@@ -50,15 +50,16 @@ public class PostService {
         p.setDescription(postRequest.getDescription());
         p.setCreatedAt(LocalDateTime.now());
         p.setUser(user);
-        p.setImageName(img.getOriginalFilename());
-        p.setImageType(img.getContentType());
 
-        try {
-            p.setImageData(img.getBytes());
-        } catch (IOException e) {
-            throw new HandelAllException(e.getMessage());
+        if(!img.isEmpty()) {
+            try {
+                p.setImageName(img.getOriginalFilename());
+                p.setImageType(img.getContentType());
+                p.setImageData(img.getBytes());
+            } catch (IOException e) {
+                throw new HandelAllException(e.getMessage());
+            }
         }
-
         p.setCreatedAt(LocalDateTime.now());
         Post savedPost =  postRepo.save(p);
 
@@ -145,7 +146,7 @@ public class PostService {
             throw new UnauthorizedException("UnAuthorized");
         }
 
-        List<Post> posts = postRepo.findAll();
+        List<Post> posts = postRepo.findAllOrdered();
 
         if(posts.isEmpty()) {
             throw new NotFoundException("No posts available");
@@ -272,10 +273,26 @@ public class PostService {
 
         Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post Not Found"));
 
-        List<Comment> comments = commentRepo.findByPostOrderByUpdatedAtDescCreatedAtDesc(post);
+        List<Comment> comments = commentRepo.findLatestCommentsByPostId(post);
 
         return comments.stream()
                 .map(comment -> commentMapper.toDto(comment)).toList();
 
+    }
+
+    public List<LikeUserResponse> getAllLikes(int postId) {
+        User user = authService.getCurrentUser();
+
+        if (user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+
+        Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post Not Found"));
+
+        List<Like> likes = likeRepo.findByPost(post);
+
+        return likes.stream()
+                .map(like -> new LikeUserResponse(like.getUser().getId() , like.getUser().getFirstName() + " "+like.getUser().getLastName()))
+                .toList();
     }
 }

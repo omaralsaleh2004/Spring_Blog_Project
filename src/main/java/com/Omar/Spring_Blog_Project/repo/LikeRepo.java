@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -16,4 +17,6 @@ public interface LikeRepo extends JpaRepository<Like , Integer> {
     int countByPostId(@Param("postId") int postId);
     boolean existsByUserAndPost(User user , Post post);
     Optional<Like> findByUserAndPost(User user, Post post);
+
+    List<Like> findByPost(Post post);
 }

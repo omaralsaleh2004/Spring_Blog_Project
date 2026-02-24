@@ -92,6 +92,12 @@ public class PostController {
         return ResponseEntity.ok().body(response);
     }
 
+    @GetMapping("/{postId}/like")
+    public ResponseEntity<List<LikeUserResponse>> getAllLikes (@PathVariable int postId) {
+        List<LikeUserResponse> likes = postService.getAllLikes(postId);
+        return ResponseEntity.ok().body(likes);
+    }
+
     @GetMapping("/{postId}/comment")
     public ResponseEntity<List<CommentResponse>> getAllComments(@PathVariable int postId) {
         List<CommentResponse> commentResponse = postService.getAllComments(postId);

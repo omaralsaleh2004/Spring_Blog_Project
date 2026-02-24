@@ -13,5 +13,6 @@ import java.util.List;
 public interface CommentRepo extends JpaRepository<Comment,Integer> {
     @Query("select count(c) from Comment c where c.post.Id = :postId")
     int countByPostId(@Param("postId") int postId);
-    List<Comment> findByPostOrderByUpdatedAtDescCreatedAtDesc(Post post);
+    @Query("select c from Comment c where c.post = :post order by coalesce (c.updatedAt , c.createdAt) desc")
+    List<Comment> findLatestCommentsByPostId(@Param("post") Post post);
 }
