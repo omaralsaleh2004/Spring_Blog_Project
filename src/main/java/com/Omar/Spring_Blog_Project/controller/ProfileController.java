@@ -61,6 +61,21 @@ public class ProfileController {
         List<ProfileResponse> profileResponseList = profileService.getAllProfiles();
         return ResponseEntity.ok().body(profileResponseList);
     }
+    @GetMapping("/{profileId}/image")
+    public ResponseEntity<byte[]> getProfileImage(@PathVariable int profileId) {
+        Profile p  = profileService.getProfileImage(profileId);
+        return ResponseEntity.ok().body(p.getImageData());
+    }
+
+    @DeleteMapping("/me/image")
+    public ResponseEntity<ApiResponse<String>> deleteProfileImage() {
+        profileService.deleteProfileImage();
+        ApiResponse<String> response = new ApiResponse(
+          "Profile Image Deleted Successfully",
+          null
+        );
+        return ResponseEntity.ok().body(response);
+    }
 
 
 }

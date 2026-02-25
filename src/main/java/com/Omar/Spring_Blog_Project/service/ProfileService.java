@@ -40,13 +40,15 @@ public class ProfileService {
         }
 
         // Set profile fields
-        p.setImageName(img.getOriginalFilename());
-        p.setImageType(img.getContentType());
-        try {
-            p.setImageData(img.getBytes());
-        } catch (IOException e) {
-            throw new HandelAllException(e.getMessage());
-        }
+       if(!img.isEmpty()) {
+           try {
+               p.setImageName(img.getOriginalFilename());
+               p.setImageType(img.getContentType());
+               p.setImageData(img.getBytes());
+           } catch (IOException e) {
+               throw new HandelAllException(e.getMessage());
+           }
+       }
 
         p.setUser(user);
         user.setProfile(p);
@@ -135,5 +137,34 @@ public class ProfileService {
 
         profileRepo.save(profile);
         return profileMapper.toDto(profile);
+    }
+
+    public Profile getProfileImage(int profileId) {
+        Profile profile = profileRepo.findById(profileId)
+                .orElseThrow(() -> new NotFoundException("Profile not found"));
+
+        return profile;
+    }
+
+    public void deleteProfileImage() {
+
+        User user = authService.getCurrentUser();
+
+        if (user == null) {
+            throw new UnauthorizedException("Unauthorized");
+        }
+
+        Profile profile = profileRepo.findByUser(user);
+
+        if (profile == null) {
+            throw new NotFoundException("Profile not found");
+        }
+
+        profile.setImageData(null);
+        profile.setImageName(null);
+        profile.setImageType(null);
+
+        profileRepo.save(profile);
+
     }
 }
