@@ -3,6 +3,8 @@ package com.Omar.Spring_Blog_Project.repo;
 import com.Omar.Spring_Blog_Project.model.Like;
 import com.Omar.Spring_Blog_Project.model.Post;
 import com.Omar.Spring_Blog_Project.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,5 +20,5 @@ public interface LikeRepo extends JpaRepository<Like , Integer> {
     boolean existsByUserAndPost(User user , Post post);
     Optional<Like> findByUserAndPost(User user, Post post);
 
-    List<Like> findByPost(Post post);
+    Page<Like> findByPost(Post post , Pageable pageable);
 }

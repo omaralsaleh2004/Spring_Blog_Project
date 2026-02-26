@@ -94,14 +94,14 @@ public class PostController {
     }
 
     @GetMapping("/{postId}/like")
-    public ResponseEntity<List<LikeUserResponse>> getAllLikes (@PathVariable int postId) {
-        List<LikeUserResponse> likes = postService.getAllLikes(postId);
+    public ResponseEntity<List<LikeUserResponse>> getAllLikes (@PathVariable int postId , @RequestParam(defaultValue = "0") int page) {
+        List<LikeUserResponse> likes = postService.getAllLikes(postId , page);
         return ResponseEntity.ok().body(likes);
     }
 
     @GetMapping("/{postId}/comment")
-    public ResponseEntity<List<CommentResponse>> getAllComments(@PathVariable int postId) {
-        List<CommentResponse> commentResponse = postService.getAllComments(postId);
+    public ResponseEntity<List<CommentResponse>> getAllComments(@PathVariable int postId ,@RequestParam(defaultValue = "0") int page) {
+        List<CommentResponse> commentResponse = postService.getAllComments(postId , page);
         return ResponseEntity.ok().body(commentResponse);
     }
 
@@ -111,8 +111,8 @@ public class PostController {
         return ResponseEntity.ok().body(postResponse);
     }
     @GetMapping("")
-    public ResponseEntity<List<PostResponse>> getAllPosts () {
-        List<PostResponse> postResponses = postService.getAllPost();
+    public ResponseEntity<List<PostResponse>> getAllPosts (@RequestParam(defaultValue = "0")int page) {
+        List<PostResponse> postResponses = postService.getAllPost(page);
         return ResponseEntity.ok().body(postResponses);
     }
     @GetMapping("/{postId}/image")

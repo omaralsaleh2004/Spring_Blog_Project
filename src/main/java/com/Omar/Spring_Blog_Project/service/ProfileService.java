@@ -12,6 +12,9 @@ import com.Omar.Spring_Blog_Project.model.User;
 import com.Omar.Spring_Blog_Project.repo.ProfileRepo;
 import com.Omar.Spring_Blog_Project.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -78,12 +81,14 @@ public class ProfileService {
         return profileMapper.toDto(profile);
     }
 
-    public List<ProfileResponse> getAllProfiles() {
+    public List<ProfileResponse> getAllProfiles(int page) {
         User user = authService.getCurrentUser();
         if (user == null) {
             throw new UnauthorizedException("UnAuthorized");
         }
-        List<Profile> profiles = profileRepo.findAll();
+        int fixedSize = 20;
+        Pageable pageable = PageRequest.of(page , fixedSize);
+        Page<Profile> profiles = profileRepo.findAll(pageable);
         if(profiles.isEmpty()) {
             throw new NotFoundException("No Profiles Found");
         }

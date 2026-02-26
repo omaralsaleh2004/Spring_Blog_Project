@@ -57,8 +57,8 @@ public class ProfileController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ProfileResponse>> getAllProfiles() {
-        List<ProfileResponse> profileResponseList = profileService.getAllProfiles();
+    public ResponseEntity<List<ProfileResponse>> getAllProfiles(@RequestParam(defaultValue = "0" ) int page) {
+        List<ProfileResponse> profileResponseList = profileService.getAllProfiles(page);
         return ResponseEntity.ok().body(profileResponseList);
     }
     @GetMapping("/{profileId}/image")

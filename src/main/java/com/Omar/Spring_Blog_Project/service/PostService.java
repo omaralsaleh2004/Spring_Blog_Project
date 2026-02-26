@@ -11,6 +11,9 @@ import com.Omar.Spring_Blog_Project.repo.CommentRepo;
 import com.Omar.Spring_Blog_Project.repo.LikeRepo;
 import com.Omar.Spring_Blog_Project.repo.PostRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -139,26 +142,30 @@ public class PostService {
         return postMapper.toDto(post , numOfLikes , numOfComment);
     }
 
-    public List<PostResponse> getAllPost() {
+    public List<PostResponse> getAllPost(int page) {
         User user = authService.getCurrentUser();
 
         if (user == null) {
             throw new UnauthorizedException("UnAuthorized");
         }
 
-        List<Post> posts = postRepo.findAllOrdered();
+        int fixedSize = 10;
+
+        Pageable pageable = PageRequest.of(page , fixedSize);
+        Page<Post> posts = postRepo.findAllOrdered(pageable);
 
         if(posts.isEmpty()) {
             throw new NotFoundException("No posts available");
         }
 
-        return posts.stream().map(post ->  {
-            int numOfLikes = likeRepo.countByPostId(post.getId());
-            int numOfComment = commentRepo.countByPostId(post.getId());
+        List<PostResponse> postResponses = posts.stream()
+                .map(post -> {
+                    int numOfLikes = likeRepo.countByPostId(post.getId());
+                    int numOfComment = commentRepo.countByPostId(post.getId());
+                    return postMapper.toDto(post, numOfLikes, numOfComment);
+                }).toList();
 
-            return postMapper.toDto(post , numOfLikes , numOfComment);
-        }).toList();
-
+        return postResponses;
     }
 
     @Transactional
@@ -264,32 +271,35 @@ public class PostService {
         return commentMapper.toDto(updated);
     }
 
-    public List<CommentResponse> getAllComments(int postId) {
+    public List<CommentResponse> getAllComments(int postId , int page) {
         User user = authService.getCurrentUser();
 
         if (user == null) {
             throw new UnauthorizedException("UnAuthorized");
         }
-
+        int fixedSize = 10;
+        Pageable pageable = PageRequest.of(page , fixedSize);
         Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post Not Found"));
 
-        List<Comment> comments = commentRepo.findLatestCommentsByPostId(post);
+        Page<Comment> comments = commentRepo.findLatestCommentsByPostId(post , pageable);
 
         return comments.stream()
                 .map(comment -> commentMapper.toDto(comment)).toList();
 
     }
 
-    public List<LikeUserResponse> getAllLikes(int postId) {
+    public List<LikeUserResponse> getAllLikes(int postId , int page) {
         User user = authService.getCurrentUser();
 
         if (user == null) {
             throw new UnauthorizedException("UnAuthorized");
         }
 
+        int fixedSize = 20;
+        Pageable pageable = PageRequest.of(page , fixedSize);
         Post post = postRepo.findById(postId).orElseThrow(() -> new NotFoundException("Post Not Found"));
 
-        List<Like> likes = likeRepo.findByPost(post);
+        Page<Like> likes = likeRepo.findByPost(post , pageable);
 
         return likes.stream()
                 .map(like -> new LikeUserResponse(like.getUser().getId() , like.getUser().getFirstName() + " "+like.getUser().getLastName()))
