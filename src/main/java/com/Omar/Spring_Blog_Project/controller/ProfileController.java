@@ -66,6 +66,11 @@ public class ProfileController {
         Profile p  = profileService.getProfileImage(profileId);
         return ResponseEntity.ok().body(p.getImageData());
     }
+    @GetMapping("/search")
+    public ResponseEntity<List<ProfileResponse>> searchProfiles(@RequestParam String keyword,@RequestParam(defaultValue = "0") int page) {
+        List<ProfileResponse> profileResponseList = profileService.searchProfiles(keyword,page);
+        return ResponseEntity.ok().body(profileResponseList);
+    }
 
     @DeleteMapping("/me/image")
     public ResponseEntity<ApiResponse<String>> deleteProfileImage() {

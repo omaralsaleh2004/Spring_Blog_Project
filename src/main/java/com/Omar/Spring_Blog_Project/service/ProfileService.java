@@ -172,4 +172,19 @@ public class ProfileService {
         profileRepo.save(profile);
 
     }
+
+    public List<ProfileResponse> searchProfiles(String keyword,int page) {
+        User user = authService.getCurrentUser();
+        if (user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+        String cleanedKeyword = keyword == null ? "" : keyword.trim();
+        int fixedSize = 20;
+        Pageable pageable = PageRequest.of(page , fixedSize);
+        Page<Profile> profiles = profileRepo.searchProfile(cleanedKeyword,pageable);
+
+        return profiles.stream()
+                .map(profile -> profileMapper.toDto(profile))
+                .toList();
+    }
 }
