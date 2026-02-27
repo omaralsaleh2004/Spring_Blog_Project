@@ -28,5 +28,9 @@ public class User {
     private List<Comment> comments;
     @OneToMany(mappedBy = "user" , fetch = FetchType.LAZY)
     private List<Like> likes;
+    @OneToMany(mappedBy = "following")
+    private List<Follow> followers;
+    @OneToMany(mappedBy = "follower")
+    private List<Follow> following;
 
 }
