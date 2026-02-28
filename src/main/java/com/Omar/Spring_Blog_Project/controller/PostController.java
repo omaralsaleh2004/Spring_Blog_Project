@@ -111,9 +111,9 @@ public class PostController {
         return ResponseEntity.ok().body(postResponse);
     }
     @GetMapping("")
-    public ResponseEntity<List<PostResponse>> getAllPosts (@RequestParam(defaultValue = "0")int page) {
-        List<PostResponse> postResponses = postService.getAllPost(page);
-        return ResponseEntity.ok().body(postResponses);
+    public ResponseEntity <PaginatedPostsResponse> getAllPosts (@RequestParam(defaultValue = "0")int page) {
+        PaginatedPostsResponse paginatedPostsResponses = postService.getAllPost(page);
+        return ResponseEntity.ok().body(paginatedPostsResponses);
     }
     @GetMapping("/{postId}/image")
     public ResponseEntity<byte[]> getPostImage(@PathVariable int postId) {

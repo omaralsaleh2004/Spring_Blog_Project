@@ -142,7 +142,7 @@ public class PostService {
         return postMapper.toDto(post , numOfLikes , numOfComment);
     }
 
-    public List<PostResponse> getAllPost(int page) {
+    public PaginatedPostsResponse getAllPost(int page) {
         User user = authService.getCurrentUser();
 
         if (user == null) {
@@ -164,8 +164,15 @@ public class PostService {
                     int numOfComment = commentRepo.countByPostId(post.getId());
                     return postMapper.toDto(post, numOfLikes, numOfComment);
                 }).toList();
+        PaginatedPostsResponse paginatedPostsResponse = new PaginatedPostsResponse();
 
-        return postResponses;
+        paginatedPostsResponse.setPosts(postResponses);
+        paginatedPostsResponse.setPageSize(posts.getSize());
+        paginatedPostsResponse.setPageNumber(posts.getNumber());
+        paginatedPostsResponse.setTotalPages(posts.getTotalPages());
+        paginatedPostsResponse.setTotalItems(posts.getTotalElements());
+
+        return paginatedPostsResponse;
     }
 
     @Transactional
