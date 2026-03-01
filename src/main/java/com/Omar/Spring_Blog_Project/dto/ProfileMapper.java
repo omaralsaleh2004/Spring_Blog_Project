@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ProfileMapper {
-
     public ProfileResponse toDto(Profile profile) {
         ProfileResponse dto = new ProfileResponse();
         dto.setId(profile.getId());
@@ -14,7 +13,9 @@ public class ProfileMapper {
         dto.setUsername(profile.getUser().getFirstName() + " "+ profile.getUser().getLastName());
         dto.setLocation(profile.getLocation());
         dto.setJobTitle(profile.getJobTitle());
-
+        if(profile.getImageName() != null) {
+            dto.setProfileImgUrl("/profile/"+profile.getId()+"/image");
+        }
         return dto;
     }
 }

@@ -11,4 +11,5 @@ public class ProfileResponse {
     private String username;
     private String jobTitle;
     private String location;
+    private String profileImgUrl;
 }

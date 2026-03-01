@@ -2,6 +2,7 @@ package com.Omar.Spring_Blog_Project.controller;
 
 
 import com.Omar.Spring_Blog_Project.dto.ApiResponse;
+import com.Omar.Spring_Blog_Project.dto.PaginatedProfileResponse;
 import com.Omar.Spring_Blog_Project.dto.ProfileRequest;
 import com.Omar.Spring_Blog_Project.dto.ProfileResponse;
 import com.Omar.Spring_Blog_Project.model.Profile;
@@ -57,9 +58,9 @@ public class ProfileController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ProfileResponse>> getAllProfiles(@RequestParam(defaultValue = "0" ) int page) {
-        List<ProfileResponse> profileResponseList = profileService.getAllProfiles(page);
-        return ResponseEntity.ok().body(profileResponseList);
+    public ResponseEntity<PaginatedProfileResponse> getAllProfiles(@RequestParam(defaultValue = "0" ) int page) {
+        PaginatedProfileResponse paginatedProfileResponse = profileService.getAllProfiles(page);
+        return ResponseEntity.ok().body(paginatedProfileResponse);
     }
     @GetMapping("/{profileId}/image")
     public ResponseEntity<byte[]> getProfileImage(@PathVariable int profileId) {

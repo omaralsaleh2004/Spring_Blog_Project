@@ -1,5 +1,6 @@
 package com.Omar.Spring_Blog_Project.service;
 
+import com.Omar.Spring_Blog_Project.dto.PaginatedProfileResponse;
 import com.Omar.Spring_Blog_Project.dto.ProfileMapper;
 import com.Omar.Spring_Blog_Project.dto.ProfileRequest;
 import com.Omar.Spring_Blog_Project.dto.ProfileResponse;
@@ -81,7 +82,7 @@ public class ProfileService {
         return profileMapper.toDto(profile);
     }
 
-    public List<ProfileResponse> getAllProfiles(int page) {
+    public PaginatedProfileResponse getAllProfiles(int page) {
         User user = authService.getCurrentUser();
         if (user == null) {
             throw new UnauthorizedException("UnAuthorized");
@@ -89,10 +90,20 @@ public class ProfileService {
         int fixedSize = 20;
         Pageable pageable = PageRequest.of(page , fixedSize);
         Page<Profile> profiles = profileRepo.findAll(pageable);
-        if(profiles.isEmpty()) {
-            throw new NotFoundException("No Profiles Found");
-        }
-        return profiles.stream().map(profile -> profileMapper.toDto(profile)).toList();
+
+        List<ProfileResponse> profileResponseList = profiles
+                .stream()
+                .map(profile -> profileMapper.toDto(profile))
+                .toList();
+
+        PaginatedProfileResponse paginatedProfileResponse = new PaginatedProfileResponse();
+        paginatedProfileResponse.setProfiles(profileResponseList);
+        paginatedProfileResponse.setPageSize(profiles.getSize());
+        paginatedProfileResponse.setPageNumber(profiles.getNumber());
+        paginatedProfileResponse.setTotalPages(profiles.getTotalPages());
+        paginatedProfileResponse.setTotalItems(profiles.getTotalElements());
+
+        return paginatedProfileResponse;
     }
 
     @Transactional

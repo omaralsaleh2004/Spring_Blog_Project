@@ -16,6 +16,9 @@ public class PostMapper {
         postResponse.setLikeCount(likes);
         postResponse.setCreatedAt(p.getCreatedAt());
         postResponse.setUpdatedAt(p.getUpdatedAt());
+        if(p.getImageName() != null) {
+            postResponse.setPostImgUrl("/post/"+p.getId()+"/image");
+        }
         return postResponse;
     }
 }
