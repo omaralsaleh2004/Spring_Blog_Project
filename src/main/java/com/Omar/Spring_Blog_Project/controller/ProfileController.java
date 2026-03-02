@@ -62,11 +62,19 @@ public class ProfileController {
         PaginatedProfileResponse paginatedProfileResponse = profileService.getAllProfiles(page);
         return ResponseEntity.ok().body(paginatedProfileResponse);
     }
-    @GetMapping("/{profileId}/image")
-    public ResponseEntity<byte[]> getProfileImage(@PathVariable int profileId) {
-        Profile p  = profileService.getProfileImage(profileId);
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<ProfileResponse> getProfile (@PathVariable int userId) {
+        ProfileResponse profileResponse = profileService.getProfile(userId);
+        return ResponseEntity.ok().body(profileResponse);
+    }
+
+    @GetMapping("/{userId}/image")
+    public ResponseEntity<byte[]> getProfileImage(@PathVariable int userId) {
+        Profile p  = profileService.getProfileImage(userId);
         return ResponseEntity.ok().body(p.getImageData());
     }
+
     @GetMapping("/search")
     public ResponseEntity<List<ProfileResponse>> searchProfiles(@RequestParam String keyword,@RequestParam(defaultValue = "0") int page) {
         List<ProfileResponse> profileResponseList = profileService.searchProfiles(keyword,page);

@@ -94,14 +94,14 @@ public class PostController {
     }
 
     @GetMapping("/{postId}/like")
-    public ResponseEntity<List<LikeUserResponse>> getAllLikes (@PathVariable int postId , @RequestParam(defaultValue = "0") int page) {
-        List<LikeUserResponse> likes = postService.getAllLikes(postId , page);
+    public ResponseEntity<PaginatedLikesResponse> getAllLikes (@PathVariable int postId , @RequestParam(defaultValue = "0") int page) {
+        PaginatedLikesResponse likes = postService.getAllLikes(postId , page);
         return ResponseEntity.ok().body(likes);
     }
 
     @GetMapping("/{postId}/comment")
-    public ResponseEntity<List<CommentResponse>> getAllComments(@PathVariable int postId ,@RequestParam(defaultValue = "0") int page) {
-        List<CommentResponse> commentResponse = postService.getAllComments(postId , page);
+    public ResponseEntity<PaginatedCommentsResponse> getAllComments(@PathVariable int postId ,@RequestParam(defaultValue = "0") int page) {
+        PaginatedCommentsResponse commentResponse = postService.getAllComments(postId , page);
         return ResponseEntity.ok().body(commentResponse);
     }
 

@@ -155,9 +155,14 @@ public class ProfileService {
         return profileMapper.toDto(profile);
     }
 
-    public Profile getProfileImage(int profileId) {
-        Profile profile = profileRepo.findById(profileId)
-                .orElseThrow(() -> new NotFoundException("Profile not found"));
+    public Profile getProfileImage(int userId) {
+        User user = userRepo.findById(userId).orElseThrow(() -> new NotFoundException("User Not Found"));
+
+        Profile profile = profileRepo.findByUser(user);
+
+        if(profile == null) {
+            throw new NotFoundException("Profile Not Found");
+        }
 
         return profile;
     }
@@ -197,5 +202,18 @@ public class ProfileService {
         return profiles.stream()
                 .map(profile -> profileMapper.toDto(profile))
                 .toList();
+    }
+
+    public ProfileResponse getProfile(int userId) {
+        User user = userRepo.findById(userId).orElseThrow(() -> new NotFoundException("User Not Found"));
+
+        Profile profile = profileRepo.findByUser(user);
+
+        if(profile == null) {
+            throw new NotFoundException("Profile Not Found");
+        }
+
+        return profileMapper.toDto(profile);
+
     }
 }

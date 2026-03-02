@@ -278,7 +278,7 @@ public class PostService {
         return commentMapper.toDto(updated);
     }
 
-    public List<CommentResponse> getAllComments(int postId , int page) {
+    public PaginatedCommentsResponse getAllComments(int postId , int page) {
         User user = authService.getCurrentUser();
 
         if (user == null) {
@@ -290,12 +290,22 @@ public class PostService {
 
         Page<Comment> comments = commentRepo.findLatestCommentsByPostId(post , pageable);
 
-        return comments.stream()
-                .map(comment -> commentMapper.toDto(comment)).toList();
+        List<CommentResponse> commentResponses = comments.stream()
+                .map(comment -> commentMapper.toDto(comment))
+                .toList();
+
+        PaginatedCommentsResponse paginatedCommentsResponse = new PaginatedCommentsResponse();
+        paginatedCommentsResponse.setComments(commentResponses);
+        paginatedCommentsResponse.setPageNumber(comments.getNumber());
+        paginatedCommentsResponse.setTotalPages(comments.getTotalPages());
+        paginatedCommentsResponse.setPageSize(comments.getSize());
+        paginatedCommentsResponse.setTotalItems(comments.getTotalElements());
+
+        return paginatedCommentsResponse;
 
     }
 
-    public List<LikeUserResponse> getAllLikes(int postId , int page) {
+    public PaginatedLikesResponse getAllLikes(int postId , int page) {
         User user = authService.getCurrentUser();
 
         if (user == null) {
@@ -308,9 +318,18 @@ public class PostService {
 
         Page<Like> likes = likeRepo.findByPost(post , pageable);
 
-        return likes.stream()
+         List<LikeUserResponse> likeUserResponses = likes.stream()
                 .map(like -> new LikeUserResponse(like.getUser().getId() , like.getUser().getFirstName() + " "+like.getUser().getLastName()))
                 .toList();
+
+         PaginatedLikesResponse paginatedLikesResponse = new PaginatedLikesResponse();
+         paginatedLikesResponse.setLikes(likeUserResponses);
+         paginatedLikesResponse.setPageNumber(likes.getNumber());
+         paginatedLikesResponse.setTotalPages(likes.getTotalPages());
+         paginatedLikesResponse.setTotalItems(likes.getTotalElements());
+         paginatedLikesResponse.setPageSize(likes.getSize());
+
+         return paginatedLikesResponse;
     }
 
     public Post getPostImage(int postId) {
