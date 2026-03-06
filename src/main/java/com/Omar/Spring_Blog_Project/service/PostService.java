@@ -32,6 +32,7 @@ public class PostService {
     private final CommentMapper commentMapper;
     private final CommentRepo commentRepo;
     private final LikeRepo likeRepo;
+    private final NotificationService notificationService;
 
 
     @Transactional
@@ -194,6 +195,7 @@ public class PostService {
 
         likeRepo.save(like);
 
+        notificationService.createNotification(user , post.getUser() , NotificationType.LIKE , post);
         int likeCount = likeRepo.countByPostId(postId);
 
         return new LikeResponse(post.getId() , likeCount);
@@ -234,6 +236,7 @@ public class PostService {
         comment.setCreatedAt(LocalDateTime.now());
         Comment savedComment = commentRepo.save(comment);
 
+        notificationService.createNotification(user , post.getUser() , NotificationType.COMMENT , post);
         return commentMapper.toDto(savedComment);
     }
 

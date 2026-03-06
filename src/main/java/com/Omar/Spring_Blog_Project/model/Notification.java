@@ -16,7 +16,8 @@ public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer Id;
-    private Integer postId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Post post;
     @ManyToOne(fetch = FetchType.LAZY)
     private User sender;
     @ManyToOne(fetch = FetchType.LAZY)

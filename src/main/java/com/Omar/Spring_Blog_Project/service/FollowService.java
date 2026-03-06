@@ -3,6 +3,7 @@ package com.Omar.Spring_Blog_Project.service;
 import com.Omar.Spring_Blog_Project.dto.FollowMapper;
 import com.Omar.Spring_Blog_Project.dto.FollowResponse;
 import com.Omar.Spring_Blog_Project.dto.FollowStats;
+import com.Omar.Spring_Blog_Project.dto.NotificationType;
 import com.Omar.Spring_Blog_Project.exception.BadRequest;
 import com.Omar.Spring_Blog_Project.exception.NotFoundException;
 import com.Omar.Spring_Blog_Project.exception.UnauthorizedException;
@@ -26,6 +27,7 @@ public class FollowService {
     private final FollowRepo followRepo;
     private final UserRepo userRepo;
     private final FollowMapper followMapper;
+    private final NotificationService notificationService;
 
     public void followUser(int userId) {
         User user = authService.getCurrentUser();
@@ -52,6 +54,7 @@ public class FollowService {
         follow.setFollower(user);
 
         followRepo.save(follow);
+        notificationService.createNotification(user , following , NotificationType.FOLLOW , null);
     }
 
     public void unFollowUser(int userId) {

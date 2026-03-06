@@ -9,5 +9,9 @@ public class NotificationResponse {
     private int id;
     private NotificationType type;
     private boolean isRead;
-    private LocalDateTime CreatedAt;
+    private String senderUsername;
+    private int senderId;
+    private String senderProfileImage;
+    private Integer postId;
+    private LocalDateTime createdAt;
 }
