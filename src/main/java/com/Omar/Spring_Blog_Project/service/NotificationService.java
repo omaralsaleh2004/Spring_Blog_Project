@@ -4,6 +4,7 @@ import com.Omar.Spring_Blog_Project.dto.NotificationMapper;
 import com.Omar.Spring_Blog_Project.dto.NotificationResponse;
 import com.Omar.Spring_Blog_Project.dto.NotificationType;
 import com.Omar.Spring_Blog_Project.dto.PaginatedNotificationResponse;
+import com.Omar.Spring_Blog_Project.exception.NotFoundException;
 import com.Omar.Spring_Blog_Project.exception.UnauthorizedException;
 import com.Omar.Spring_Blog_Project.model.Notification;
 import com.Omar.Spring_Blog_Project.model.Post;
@@ -15,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -103,5 +105,34 @@ public class NotificationService {
         notification.setCreatedAt(LocalDateTime.now());
 
         notificationRepo.save(notification);
+    }
+
+    public void readNotification(int notificationId) {
+         User user = authService.getCurrentUser();
+
+         if(user == null)
+             throw new UnauthorizedException("Unauthorized");
+
+         Notification notification = notificationRepo.findById(notificationId)
+                 .orElseThrow(() -> new NotFoundException("Notification Not Found"));
+
+        if (!notification.getReceiver().getId().equals(user.getId())) {
+            throw new UnauthorizedException("You cannot modify this notification");
+        }
+
+         notification.setRead(true);
+
+         notificationRepo.save(notification);
+    }
+
+
+    @Transactional
+    public void readAllNotification() {
+        User user = authService.getCurrentUser();
+
+        if(user == null)
+            throw new UnauthorizedException("Unauthorized");
+
+        notificationRepo.markAllAsRead(user);
     }
 }

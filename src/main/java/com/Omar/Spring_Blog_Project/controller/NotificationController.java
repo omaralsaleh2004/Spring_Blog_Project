@@ -1,13 +1,11 @@
 package com.Omar.Spring_Blog_Project.controller;
 
+import com.Omar.Spring_Blog_Project.dto.ApiResponse;
 import com.Omar.Spring_Blog_Project.dto.PaginatedNotificationResponse;
 import com.Omar.Spring_Blog_Project.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -30,10 +28,31 @@ public class NotificationController {
         return ResponseEntity.ok().body(notificationResponse);
     }
 
-    @GetMapping("unread-count")
+    @GetMapping("/unread-count")
     public Map<String,Long> getUnreadNotificationsCount (@RequestParam(defaultValue = "0") int page) {
        long count = notificationService.getUnreadCount();
        return Map.of("unreadCount" , count);
     }
+
+    @PatchMapping("/{notificationId}/read")
+    public ResponseEntity<ApiResponse<String>> readNotification (@PathVariable int notificationId) {
+        notificationService.readNotification(notificationId);
+        ApiResponse<String> apiResponse = new ApiResponse<>(
+                "Notifications marked as read",
+                null
+        );
+        return ResponseEntity.ok().body(apiResponse);
+    }
+
+    @PatchMapping("/read-all")
+    public ResponseEntity<ApiResponse<String>> readAllNotification () {
+        notificationService.readAllNotification();
+        ApiResponse<String> apiResponse = new ApiResponse<>(
+                "All Notifications marked as read",
+                null
+        );
+        return ResponseEntity.ok().body(apiResponse);
+    }
+
 
 }

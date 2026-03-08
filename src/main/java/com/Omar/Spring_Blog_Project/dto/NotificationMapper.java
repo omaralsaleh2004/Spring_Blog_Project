@@ -14,7 +14,7 @@ public class NotificationMapper {
         else {
             notificationResponse.setPostId(null);
         }
-        notificationResponse.setRead(notificationResponse.isRead());
+        notificationResponse.setRead(notification.isRead());
         notificationResponse.setSenderProfileImage("/profile/"+notification.getSender().getId()+"/image");
         notificationResponse.setSenderUsername(notification.getSender().getFirstName() +" "+notification.getSender().getLastName());
         notificationResponse.setType(notification.getType());
