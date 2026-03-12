@@ -11,7 +11,6 @@ public class MessageResponse {
     private Integer receiverId;
     private String content;
     private String senderName;
-    private String receiverName;
     private String senderAvatar;
     private boolean isRead;
     private LocalDateTime createdAt;
