@@ -27,7 +27,7 @@ public class MessageController {
     }
 
     @GetMapping("/chat/{otherUserId}")
-    private ResponseEntity<ApiResponse<PaginatedMessageResponse>> getChat(@PathVariable int otherUserId , @RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<ApiResponse<PaginatedMessageResponse>> getChat(@PathVariable int otherUserId , @RequestParam(defaultValue = "0") int page) {
         PaginatedMessageResponse paginatedMessageResponse = messageService.getChat(otherUserId , page);
         ApiResponse<PaginatedMessageResponse> response = new ApiResponse<>(
                 "Chat fetched Successfully",
@@ -35,4 +35,14 @@ public class MessageController {
         );
         return ResponseEntity.ok().body(response);
     }
+    @PostMapping("/chat/{messageId}")
+    public ResponseEntity<ApiResponse<MessageResponse>> markAsRead (@PathVariable int messageId){
+        MessageResponse messageResponse = messageService.markAsRead(messageId);
+        ApiResponse<MessageResponse> response = new ApiResponse<>(
+                "Message Marked as Read",
+                messageResponse
+        );
+        return ResponseEntity.ok().body(response);
+    }
+
 }

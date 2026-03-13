@@ -106,4 +106,25 @@ public class MessageService {
         return paginatedMessageResponse;
 
     }
+
+    public MessageResponse markAsRead(int messageId) {
+        User user = authService.getCurrentUser();
+
+        if(user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+
+        Message message = messageRepo.findById(messageId).orElseThrow(() -> new NotFoundException("Message Not Found"));
+
+        if(!message.getReceiver().getId().equals(user.getId())){
+            throw new UnauthorizedException("You cannot mark this message as read");
+        }
+
+        message.setRead(true);
+
+        Message savedMessage =messageRepo.save(message);
+
+        return mapToResponse(savedMessage);
+
+    }
 }
