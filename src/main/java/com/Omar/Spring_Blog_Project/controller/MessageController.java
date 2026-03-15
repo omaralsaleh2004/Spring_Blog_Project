@@ -1,9 +1,6 @@
 package com.Omar.Spring_Blog_Project.controller;
 
-import com.Omar.Spring_Blog_Project.dto.ApiResponse;
-import com.Omar.Spring_Blog_Project.dto.MessageResponse;
-import com.Omar.Spring_Blog_Project.dto.PaginatedMessageResponse;
-import com.Omar.Spring_Blog_Project.dto.SendMessageRequest;
+import com.Omar.Spring_Blog_Project.dto.*;
 import com.Omar.Spring_Blog_Project.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,6 +38,26 @@ public class MessageController {
         ApiResponse<MessageResponse> response = new ApiResponse<>(
                 "Message Marked as Read",
                 messageResponse
+        );
+        return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping("/chat/{messageId}")
+    public ResponseEntity<ApiResponse<MessageResponse>> editMessage (@RequestBody EditMessageRequest request, @PathVariable int messageId) {
+        MessageResponse messageResponse = messageService.editMessage(request,messageId);
+        ApiResponse<MessageResponse> response = new ApiResponse<>(
+                "Message Edited Successfully",
+                messageResponse
+        );
+        return ResponseEntity.ok().body(response);
+    }
+
+    @DeleteMapping("/chat/{messageId}")
+    public ResponseEntity<ApiResponse<String>> deleteMessage (@PathVariable int messageId) {
+        messageService.deleteMessage(messageId);
+        ApiResponse<String> response = new ApiResponse<>(
+                "Message Deleted Successfully",
+                null
         );
         return ResponseEntity.ok().body(response);
     }

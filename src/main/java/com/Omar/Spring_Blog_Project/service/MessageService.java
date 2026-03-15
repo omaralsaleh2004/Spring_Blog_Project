@@ -1,5 +1,6 @@
 package com.Omar.Spring_Blog_Project.service;
 
+import com.Omar.Spring_Blog_Project.dto.EditMessageRequest;
 import com.Omar.Spring_Blog_Project.dto.MessageResponse;
 import com.Omar.Spring_Blog_Project.dto.PaginatedMessageResponse;
 import com.Omar.Spring_Blog_Project.dto.SendMessageRequest;
@@ -126,5 +127,47 @@ public class MessageService {
 
         return mapToResponse(savedMessage);
 
+    }
+
+    public MessageResponse editMessage(EditMessageRequest request, int messageId) {
+        User user = authService.getCurrentUser();
+
+        if(user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+        if(request.getContent().isBlank()) {
+            throw new BadRequest("Content cannot be empty");
+        }
+
+        Message message = messageRepo.findById(messageId)
+                .orElseThrow(() -> new NotFoundException("Message Not Found"));
+
+        if(!message.getSender().getId().equals(user.getId())) {
+            throw new UnauthorizedException("You cannot edit this message");
+        }
+
+        message.setContent(request.getContent());
+
+        Message saveMessage = messageRepo.save(message);
+
+        return mapToResponse(saveMessage);
+
+    }
+
+    public void deleteMessage(int messageId) {
+        User user = authService.getCurrentUser();
+
+        if(user == null) {
+            throw new UnauthorizedException("UnAuthorized");
+        }
+
+        Message message = messageRepo.findById(messageId)
+                .orElseThrow(() -> new NotFoundException("Message Not Found"));
+
+        if(!message.getSender().getId().equals(user.getId())) {
+            throw new UnauthorizedException("You cannot delete this message");
+        }
+
+        messageRepo.delete(message);
     }
 }
